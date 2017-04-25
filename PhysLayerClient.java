@@ -26,8 +26,9 @@ public class PhysLayerClient {
             //Takes in next 320 bits form initial message before encoding
             LinkedList<Integer> fiveSig = signalMessageBits(socket);
 
-            //Instantiates the 5b/4b conversion convTable for the first time and begins
-            //encoding process
+            /* Instantiates the 5b/4b conversion convTable for the first time and begins
+            /  encoding process
+            */
             LinkedList<Integer> conv5B = encode4B5B(fiveSig);
 
             //Uses given conversion convTable to decode the message 
@@ -45,7 +46,9 @@ public class PhysLayerClient {
             socket.close();
             System.out.println("Disconnected from server.");
 
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) { 
+            e.printStackTrace(); 
+        }
     }
 
     // Absorbs the first 64 bits from the server and averages them to find the baseline
@@ -63,12 +66,15 @@ public class PhysLayerClient {
             
            return baseline;
 
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) { 
+            e.printStackTrace(); 
+        }
         return 0.0;
     }
 
-    // Receives the remaining 320 bits from the server and converts them based on 
-    //high or low fiveSig
+    /* Receives the remaining 320 bits from the server and converts them based on 
+    /  high or low fiveSig
+    */
     public static LinkedList<Integer> signalMessageBits(Socket socket) {
         try {
             InputStream is = socket.getInputStream();
@@ -78,12 +84,16 @@ public class PhysLayerClient {
                 fiveSig.add(highOrLow(input));
             }
             return fiveSig;
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) { 
+            e.printStackTrace();
+        }
         return null;
     }
 
-    // Will reference every bitsToConvertlist of 5 bits from the NRZI finalDecodedMessage
-    // message to determine what the actual data values are
+    /* References checkTable method which accesses table
+    /  Splits old list into 5 bits at a time in a new linked list to
+    /  properly convert it.
+    */
     public static LinkedList<Integer> checkTable(LinkedList<Integer> fiveSig) {
         ConversionTable convTable = new ConversionTable();
         LinkedList<Integer> decodedMessage = new LinkedList<>();
@@ -123,8 +133,7 @@ public class PhysLayerClient {
         return finalDecodedMessage;
     }
 
-    // Will combineBits the upper and lower bits to
-    // have the right binary value and return the LinkedList
+    // Combines high and low bits by bit-shifting to create new correct list of bits
     public static LinkedList<Integer> combineBits(LinkedList<Integer> bits) {
         LinkedList<Integer> merged = new LinkedList<>();
         for(int i = 0; i < bits.size(); i += 2) {
@@ -136,8 +145,7 @@ public class PhysLayerClient {
         return merged;
     }
 
-    // Will send the message as an array of bytes
-    // as well as print them out in Hex for the user to see what was send
+    // Relays final message to server 
     public static void talkToServer(Socket socket, LinkedList<Integer> message) {
         try {
             int size = message.size();
@@ -153,7 +161,9 @@ public class PhysLayerClient {
             System.out.println();
             os.write(send);
 
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) { 
+            e.printStackTrace();
+        }
     }
 
     // Checks response and replies with true if
@@ -168,8 +178,9 @@ public class PhysLayerClient {
     }
 
 
-    // Instantiating a Conversion convTable class to make it easier to compile and run
-    // instead of having a Conversion convTable class
+    /* Instantiating a Conversion convTable class to make it easier to compile, access
+    /  and run instead of having a ConversionTable separate class.
+    */
     static final class ConversionTable {
         HashMap<String, String> convTable;
 
